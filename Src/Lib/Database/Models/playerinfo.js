@@ -5,8 +5,6 @@ const playerinfoSchema = mongoose.Schema({
     username: { type: String },
     starterchoosen: { type: Boolean, default: false },
     startername: { type: String },
-    selectedPoke: { type: Number },
-    selectedPokeName: { type: String },
     numberofpokes: { type: Number }
 });
 

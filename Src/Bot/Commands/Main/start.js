@@ -37,34 +37,35 @@ class Start extends PokeCmd {
         "Gen 7: Rowlet, Litten, Popplio\n"+
         "\n"+
         "Gen 8: Grookey, Scorbunny, Sobble")
-            .setThumbnail(message.author.displayAvatarURL)
-            .setImage("https://www.bing.com/images/search?view=detailV2&ccid=N5r2QPfZ&id=EFA72D4B5F376B3FE4EFC0734FAA1E4051FB199A&thid=OIP.N5r2QPfZEbyUkHC9hivqgwHaEK&mediaurl=https%3a%2f%2fi.ytimg.com%2fvi%2fntJw56oMDas%2fmaxresdefault.jpg&exph=720&expw=1280&q=pokemonstarters&simid=608043235739635064&selectedIndex=6")
+            .setThumbnail(message.author.displayAvatarURL({dynamic: true}))
+            .setImage("https://cdn.discordapp.com/attachments/712608509048651816/716547259604664320/Pokemon_starters_.png")
             .setFooter("You have 30 seconds of time to reply the correct name of pokemon")
         message.reply(stembed)
         let collector = new MessageCollector(message.channel, msgCollectorFilter.bind(null, message));
         collector.on('collect', async msg => {
-            if (starterchoosen) {
-                 return message.channel.send(`You already choose a starter pokemon named ` + startername + `. You cannot choose twice...`)
-                     .then(collector.stop('A pokemon was already choosen'));
-            } else {
+            if ( !starterchoosen ) {
+
                 console.log ( msg.content )
-                await PlayerInfo.findOne ({ userID : message.author.id } , async ( err , startername , starterchoosen ) => {
+                await PlayerInfo.findOne ( { userID : message.author.id } , async ( err , startername , starterchoosen ) => {
                     if ( err ) console.log ( err );
                     if ( !startername || !starterchoosen ) {
-                        const newPlayerInfo = new PlayerInfo({
+                        const newPlayerInfo = new PlayerInfo ( {
                             userName : message.author.username ,
                             userID : message.author.id ,
                             startername : msg.content ,
-                            starterchoosen : true,
+                            starterchoosen : true ,
                         } );
-                        newPlayerInfo.save().catch ( err => console.log ( err ) );
+                        newPlayerInfo.save ().catch ( err => console.log ( err ) );
                     }
                 } );
-                collector.stop('A pokemon was choosen');
+                collector.stop ( 'A pokemon was choosen' );
                 message.channel.send ( "You have chose **__" + msg.content + "__** as a starter pokemon" )
                 return;
+            } else {
+                return message.channel.send ( `You already chose a starter pokemon named ` + startername + `. You cannot choose twice...` )
+                    .then ( collector.stop ( 'A pokemon was already choosen' ) );
             }
-            })
+        })
     }
 }
 module.exports = Start;

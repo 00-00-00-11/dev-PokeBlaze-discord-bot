@@ -21,8 +21,12 @@
     "ascii-table": "0.0.9"
   },
   "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
     "discord.js": "^12.2.0",
     "fs": "0.0.1-security",
-    "mongoose": "^5.9.16"
+    "mongoose": "^5.9.16",
+    "pokeapi-js-wrapper": "^1.1.2",
+    "pokedex-promise-v2": "^3.2.0",
+    "puppeteer": "^3.2.0"
   }
 }
