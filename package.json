@@ -1,0 +1,28 @@
+{
+  "name": "blazify-pokemon-bot",
+  "version": "1.0.0",
+  "description": "A pokemon bot for discord",
+  "main": "index.js",
+  "scripts": {
+    "test": "node ./Src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blazify/blazify-pokemon-bot.git"
+  },
+  "author": "romeah",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Blazify/blazify-pokemon-bot/issues"
+  },
+  "homepage": "https://github.com/Blazify/blazify-pokemon-bot#readme",
+  "keywords": [],
+  "devDependencies": {
+    "ascii-table": "0.0.9"
+  },
+  "dependencies": {
+    "discord.js": "^12.2.0",
+    "fs": "0.0.1-security",
+    "mongoose": "^5.9.16"
+  }
+}
