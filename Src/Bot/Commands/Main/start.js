@@ -46,14 +46,15 @@ class Start extends PokeCmd {
             if ( !starterchoosen ) {
 
                 console.log ( msg.content )
-                await PlayerInfo.findOne ( { userID : message.author.id } , async ( err , startername , starterchoosen ) => {
+                await PlayerInfo.findOne ( { userID : message.author.id } , async ( err , startername , starterchoosen, numberofpokes ) => {
                     if ( err ) console.log ( err );
-                    if ( !startername || !starterchoosen ) {
+                    if ( !startername || !starterchoosen || !numberofpokes) {
                         const newPlayerInfo = new PlayerInfo ( {
                             userName : message.author.username ,
                             userID : message.author.id ,
                             startername : msg.content ,
                             starterchoosen : true ,
+                            numberofpokes: 1
                         } );
                         newPlayerInfo.save ().catch ( err => console.log ( err ) );
                     }

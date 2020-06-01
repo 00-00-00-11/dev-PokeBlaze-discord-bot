@@ -1,24 +1,34 @@
-const { MessageEmbed } = require("discord.js");
-const poke = new Set();
+const { MessageEmbed } = require ( "discord.js" );
+const poke = new Set ();
+const Pokemon = require ( "../../../Lib/Database/Models/pokemon" );
+const PlayerInfo = require ( "../../../Lib/Database/Models/playerinfo" )
 
 class Message {
     constructor ( client ) {
         this.client = client;
         this.set = poke;
     }
-    async run ( message ) {
-        const Gen = ["Gen1", "Gen2", "Gen3", "Gen4", "Gen5", "Gen6", "Gen7", "Gen8"]
-        const GentoSpawn = Gen[Math.floor(Math.random() * Gen.length)];
-        if (message.author.bot) return;
-        const chance = Math.floor(Math.random() * 100 + 1);
-        if (chance >= 90) {
-            if (!this.set.has(message.guild.id)) {
-                const spawn = require("../../../Lib/Gens/"+`${GentoSpawn}`);
 
-                const correct = await spawn("https://pokemondb.net/pokedex/national/");
-                console.log(correct);
-    
-                const embed = new MessageEmbed()
+    async run ( message ) {
+        const Gen = [ "Gen1","Gen2","Gen3","Gen4","Gen5","Gen6","Gen7","Gen8" ]
+        const GentoSpawn = Gen[Math.floor ( Math.random () * Gen.length )];
+        let health = Math.floor ( Math.random () * 31 );
+        let spatk = Math.floor ( Math.random () * 31 );
+        let atk = Math.floor ( Math.random () * 31 );
+        let def = Math.floor ( Math.random () * 31 );
+        let spd = Math.floor ( Math.random () * 31 );
+        let spdef = Math.floor ( Math.random () * 31 );
+        let iv = Math.floor ( Math.ceil(atk + health + spatk + spdef + def + spd) / (31 * 6) *100 );
+        if ( message.author.bot ) return;
+        const chance = Math.floor ( Math.random () * 100 + 1 );
+        if ( chance >= 90 ) {
+            if ( !this.set.has ( message.guild.id ) ) {
+                const spawn = require ( "../../../Lib/Gens/" + `${ GentoSpawn }` );
+
+                const correct = await spawn ( "https://pokemondb.net/pokedex/national/" );
+                console.log ( correct );
+
+                const embed = new MessageEmbed ()
                 .setTitle("A pokemon has spawned")
                 .setImage(correct.pokepic1)
                 .setColor("#FF0000");
@@ -27,14 +37,53 @@ class Message {
                 const collector = message.channel.createMessageCollector(filter);
                 collector.on("collect", async m => {
                     if (m.content.toLowerCase() === correct.pokename1.toLowerCase()) {
-                        const embed = new MessageEmbed()
-                            .setThumbnail(correct.pokepic1)
-                            .setDescription(`${m.author} has just caught a wild ${correct.pokename1} `)
-                            .setColor("#008000")
-                        message.channel.send(embed);
-                        await collector.stop();
+                        const starterSettings = await PlayerInfo.findOne ( { userID : message.author.id } ) || new PlayerInfo ( {
+                            userID : message.author.id
+                        } );
+                        const { numberofpokes, starterchoosen } = starterSettings;
+                        if ( !starterchoosen ) return message.channel.send ( "Please use the command b!start before starting to catch pokemons" );
+                        await PlayerInfo.findOne ( { userID : m.author.id },async ( err,numberofpokes ) => {
+                            if ( err ) console.log ( err );
+                            if ( !numberofpokes ) {
+                                const newPlayerInfo = new PlayerInfo ( {
+                                    userName : message.author.username,
+                                    userID : message.author.id,
+                                    numberofpokes : +1
+                                } );
+                                await newPlayerInfo.save ().catch ( err => console.log ( err ) );
+                            }
+                            numberofpokes.numberofpokes = numberofpokes.numberofpokes + +1
+                            numberofpokes.save ().catch ( err => console.log ( err ) );
+                        } );
+                        await Pokemon.findOne ( { userID : m.author.id },async ( err,pokeName,pokeNumber,selected,pokePic,Health,spAtk,SpDef,Def,Atk,speed,IVTOTAL ) => {
+                            if ( err ) console.log ( err );
+                            if ( !pokeName || !pokePic || !pokeNumber || !selected || !Health || !spAtk || !SpDef || Def || !Atk || !speed || IVTOTAL ) {
+                                const newPokemon = new Pokemon ( {
+                                    userName : m.author.username,
+                                    userID : m.author.id,
+                                    pokeName : correct.pokename1,
+                                    pokePic : correct.pokepic1,
+                                    pokeNumber : numberofpokes + 1,
+                                    selected: false,
+                                    Health : health,
+                                    spAtk : spatk,
+                                    SpDef : spdef,
+                                    Def : def,
+                                    Atk : atk,
+                                    speed : spd,
+                                    IVTOTAL : iv,
+                                } );
+                                await newPokemon.save ().catch ( err => console.log ( err ) );
+                            }
+                        } );
+                        const embed = new MessageEmbed ()
+                            .setThumbnail ( correct.pokepic1 )
+                            .setDescription ( `${ m.author } has just caught a wild ${ correct.pokename1 } ` )
+                            .setColor ( "#008000" )
+                        await message.channel.send ( embed );
+                        await collector.stop ();
                     } else {
-                       console.log("nonfood")
+
                     }
                 });
                 await this.set.add(message.guild.id);
