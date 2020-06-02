@@ -10,8 +10,6 @@ class Message {
     }
 
     async run ( message ) {
-        const Gen = [ "Gen1","Gen2","Gen3","Gen4","Gen5","Gen6","Gen7","Gen8" ]
-        const GentoSpawn = Gen[Math.floor ( Math.random () * Gen.length )];
         let health = Math.floor ( Math.random () * 31 );
         let spatk = Math.floor ( Math.random () * 31 );
         let atk = Math.floor ( Math.random () * 31 );
@@ -21,22 +19,23 @@ class Message {
         let iv = Math.floor ( Math.ceil(atk + health + spatk + spdef + def + spd) / (31 * 6) *100 );
         if ( message.author.bot ) return;
         const chance = Math.floor ( Math.random () * 100 + 1 );
-        if ( chance >= 90 ) {
+        if ( chance >= 98 ) {
             if ( !this.set.has ( message.guild.id ) ) {
-                const spawn = require ( "../../../Lib/Gens/" + `${ GentoSpawn }` );
-
-                const correct = await spawn ( "https://pokemondb.net/pokedex/national/" );
+                const spawn = require("../../../Lib/AllPokemons/pokes.json")
+                const Randomizer = Math.floor(Math.random()*880)
+                const Stringed = Randomizer.toLocaleString()
+                const correct = spawn[`${Stringed}`]
                 console.log ( correct );
 
                 const embed = new MessageEmbed ()
                 .setTitle("A pokemon has spawned")
-                .setImage(correct.pokepic1)
+                .setImage(correct.pic)
                 .setColor("#FF0000");
                 await message.channel.send(embed);
                 const filter = m => !m.bot && m.author.id !== this.client.user.id;
                 const collector = message.channel.createMessageCollector(filter);
                 collector.on("collect", async m => {
-                    if (m.content.toLowerCase() === correct.pokename1.toLowerCase()) {
+                    if (m.content.toLowerCase() === correct.name.toLowerCase()) {
                         const starterSettings = await PlayerInfo.findOne ( { userID : message.author.id } ) || new PlayerInfo ( {
                             userID : message.author.id
                         } );
@@ -61,8 +60,8 @@ class Message {
                                 const newPokemon = new Pokemon ( {
                                     userName : m.author.username,
                                     userID : m.author.id,
-                                    pokeName : correct.pokename1,
-                                    pokePic : correct.pokepic1,
+                                    pokeName : correct.pic,
+                                    pokePic : correct.name,
                                     pokeNumber : numberofpokes + 1,
                                     selected: false,
                                     Health : health,
@@ -77,8 +76,8 @@ class Message {
                             }
                         } );
                         const embed = new MessageEmbed ()
-                            .setThumbnail ( correct.pokepic1 )
-                            .setDescription ( `${ m.author } has just caught a wild ${ correct.pokename1 } ` )
+                            .setThumbnail ( correct.pic )
+                            .setDescription ( `${ m.author } has just caught a wild ${ correct.name } ` )
                             .setColor ( "#008000" )
                         await message.channel.send ( embed );
                         await collector.stop ();
@@ -90,6 +89,8 @@ class Message {
                 setTimeout(() => this.set.delete(message.guild.id), 30000);
             }
         }
+
+
 
         if ( message.author.bot || !message.content.startsWith ( "b!" ) ) return;
         const args = message.content.split ( /\s+/g );
