@@ -28,40 +28,48 @@ class Message {
                 console.log ( correct );
 
                 const embed = new MessageEmbed ()
-                .setTitle("A pokemon has spawned")
+                .setTitle("A pokemon has spawned... Just guess the name and type b!catch <pokemon>")
                 .setImage(correct.pic)
                 .setColor("#FF0000");
                 await message.channel.send(embed);
-                const filter = m => !m.bot && m.author.id !== this.client.user.id;
-                const collector = message.channel.createMessageCollector(filter);
+                const filter =  m => !m.bot && m.author.id !== this.client.user.id
+                const collector = message.channel.createMessageCollector(filter, {
+                    max: 1000,
+                    time: 600000,
+                    errors: ["time"],
+                });
                 collector.on("collect", async m => {
-                    if (m.content.toLowerCase() === correct.name.toLowerCase()) {
+                    if (m.content.toLowerCase() === "b!catch "+ correct.name.toLowerCase()) {
                         const starterSettings = await PlayerInfo.findOne ( { userID : message.author.id } ) || new PlayerInfo ( {
                             userID : message.author.id
                         } );
-                        const { numberofpokes, starterchoosen } = starterSettings;
+                        const { numberofpokes, starterchoosen} = starterSettings;
                         if ( !starterchoosen ) return message.channel.send ( "Please use the command b!start before starting to catch pokemons" );
-                        await PlayerInfo.findOne ( { userID : m.author.id },async ( err,numberofpokes ) => {
+                        await PlayerInfo.findOne ( { userID : m.author.id },async ( err,numberofpokes, coins ) => {
                             if ( err ) console.log ( err );
-                            if ( !numberofpokes ) {
+                            if ( !numberofpokes || !coins) {
                                 const newPlayerInfo = new PlayerInfo ( {
-                                    userName : message.author.username,
-                                    userID : message.author.id,
-                                    numberofpokes : +1
+                                    userName : m.author.username,
+                                    userID : m.author.id,
+                                    numberofpokes : 1,
+                                    coins : 0,
                                 } );
                                 await newPlayerInfo.save ().catch ( err => console.log ( err ) );
                             }
-                            numberofpokes.numberofpokes = numberofpokes.numberofpokes + +1
-                            numberofpokes.save ().catch ( err => console.log ( err ) );
+                            coins.coins = coins.coins + 35;
+                            numberofpokes.numberofpokes = numberofpokes.numberofpokes + +1;
+                            numberofpokes.save().catch(err => console.log(err))
                         } );
-                        await Pokemon.findOne ( { userID : m.author.id },async ( err,pokeName,pokeNumber,selected,pokePic,Health,spAtk,SpDef,Def,Atk,speed,IVTOTAL ) => {
+                        await Pokemon.findOne ( { userID : m.author.id },async ( err,pokeName,pokeNumber,selected,pokePic,Health,spAtk,SpDef,Def,Atk,speed,IVTOTAL,xp,level ) => {
                             if ( err ) console.log ( err );
-                            if ( !pokeName || !pokePic || !pokeNumber || !selected || !Health || !spAtk || !SpDef || Def || !Atk || !speed || IVTOTAL ) {
+                            if ( !pokeName || !pokePic || !pokeNumber || !selected || !xp || !level || !Health || !spAtk || !SpDef || Def || !Atk || !speed || IVTOTAL ) {
                                 const newPokemon = new Pokemon ( {
                                     userName : m.author.username,
                                     userID : m.author.id,
-                                    pokeName : correct.pic,
-                                    pokePic : correct.name,
+                                    pokeName : correct.name,
+                                    pokePic : correct.pic,
+                                    xp: 0,
+                                    level: 0,
                                     pokeNumber : numberofpokes + 1,
                                     selected: false,
                                     Health : health,
@@ -76,7 +84,7 @@ class Message {
                             }
                         } );
                         const embed = new MessageEmbed ()
-                            .setThumbnail ( correct.pic )
+                            .setThumbnail (m.author.displayAvatarURL({dynamic: true}))
                             .setDescription ( `${ m.author } has just caught a wild ${ correct.name } ` )
                             .setColor ( "#008000" )
                         await message.channel.send ( embed );

@@ -46,14 +46,15 @@ class Start extends PokeCmd {
             if ( !starterchoosen ) {
 
                 console.log ( msg.content )
-                await PlayerInfo.findOne ( { userID : message.author.id } , async ( err , startername , starterchoosen, numberofpokes ) => {
+                await PlayerInfo.findOne ( { userID : msg.author.id } , async ( err , startername , starterchoosen, numberofpokes ) => {
                     if ( err ) console.log ( err );
                     if ( !startername || !starterchoosen || !numberofpokes) {
                         const newPlayerInfo = new PlayerInfo ( {
-                            userName : message.author.username ,
-                            userID : message.author.id ,
+                            userName : msg.author.username ,
+                            userID : msg.author.id ,
                             startername : msg.content ,
                             starterchoosen : true ,
+                            coins: 0,
                             numberofpokes: 1
                         } );
                         newPlayerInfo.save ().catch ( err => console.log ( err ) );
@@ -61,7 +62,7 @@ class Start extends PokeCmd {
                 } );
                 collector.stop ( 'A pokemon was choosen' );
                 message.channel.send ( "You have chose **__" + msg.content + "__** as a starter pokemon" )
-                return;
+
             } else {
                 return message.channel.send ( `You already chose a starter pokemon named ` + startername + `. You cannot choose twice...` )
                     .then ( collector.stop ( 'A pokemon was already choosen' ) );
