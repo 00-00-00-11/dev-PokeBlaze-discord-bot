@@ -29,7 +29,7 @@ class Message {
 
                 const embed = new MessageEmbed ()
                 .setTitle("A pokemon has spawned... Just guess the name and type b!catch <pokemon>")
-                .setImage(correct.pic)
+                .setImage(correct.Pic)
                 .setColor("#FF0000");
                 await message.channel.send(embed);
                 const filter =  m => !m.bot && m.author.id !== this.client.user.id
@@ -39,7 +39,7 @@ class Message {
                     errors: ["time"],
                 });
                 collector.on("collect", async m => {
-                    if (m.content.toLowerCase() === "b!catch "+ correct.name.toLowerCase()) {
+                    if (m.content.toLowerCase() === "b!catch "+ correct.Name.toLowerCase()) {
                         const starterSettings = await PlayerInfo.findOne ( { userID : message.author.id } ) || new PlayerInfo ( {
                             userID : message.author.id
                         } );
@@ -66,8 +66,8 @@ class Message {
                                 const newPokemon = new Pokemon ( {
                                     userName : m.author.username,
                                     userID : m.author.id,
-                                    pokeName : correct.name,
-                                    pokePic : correct.pic,
+                                    pokeName : correct.Name,
+                                    pokePic : correct.Pic,
                                     xp: 0,
                                     level: 0,
                                     pokeNumber : numberofpokes + 1,
@@ -85,7 +85,7 @@ class Message {
                         } );
                         const embed = new MessageEmbed ()
                             .setThumbnail (m.author.displayAvatarURL({dynamic: true}))
-                            .setDescription ( `${ m.author } has just caught a wild ${ correct.name } ` )
+                            .setDescription ( `${ m.author } has just caught a wild ${ correct.Name } ` )
                             .setColor ( "#008000" )
                         await message.channel.send ( embed );
                         await collector.stop ();
