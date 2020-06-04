@@ -41,9 +41,112 @@ class Start extends PokeCmd {
             .setImage("https://cdn.discordapp.com/attachments/712608509048651816/716547259604664320/Pokemon_starters_.png")
             .setFooter("You have 30 seconds of time to reply the correct name of pokemon")
         message.reply(stembed)
+        let health = Math.floor ( Math.random () * 31 );
+        let spatk = Math.floor ( Math.random () * 31 );
+        let atk = Math.floor ( Math.random () * 31 );
+        let def = Math.floor ( Math.random () * 31 );
+        let spd = Math.floor ( Math.random () * 31 );
+        let spdef = Math.floor ( Math.random () * 31 );
+        let iv = Math.floor ( Math.ceil(atk + health + spatk + spdef + def + spd) / (31 * 6) *100 );
         let collector = new MessageCollector(message.channel, msgCollectorFilter.bind(null, message));
         collector.on('collect', async msg => {
+            if (["Bulbasur", "Charmander", "Squirtle", "Chikorita", "Cyndaquil", "Totodile", "Treecko", "Torchic", "Mudkip", "Turtwig", "Chimchar", "Piplup", "Snivy", "Tepig", "Oshawott", "Chespin", "Fennekin", "Froakie", "Rowlet", "Litten", "Popplio", "Grookey", "Scorbunny", "Sobble"].includes(msg.content) ) {
             if ( !starterchoosen ) {
+                if(msg.content === "") {
+
+                } else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+                else
+                if(msg.content === "") {
+
+                }
+
 
                 console.log ( msg.content )
                 await PlayerInfo.findOne ( { userID : msg.author.id } , async ( err , startername , starterchoosen, numberofpokes ) => {
@@ -60,12 +163,39 @@ class Start extends PokeCmd {
                         newPlayerInfo.save ().catch ( err => console.log ( err ) );
                     }
                 } );
+                await Pokemon.findOne ( { userID : m.author.id },async ( err,pokeName,pokeNumber,selected,pokePic,Health,spAtk,SpDef,Def,Atk,speed,IVTOTAL,xp,level ) => {
+                    if ( err ) console.log ( err );
+                    if ( !pokeName || !pokePic || !pokeNumber || !selected || !xp || !level || !Health || !spAtk || !SpDef || Def || !Atk || !speed || IVTOTAL ) {
+                        const newPokemon = new Pokemon ( {
+                            userName : msg.author.username,
+                            userID : msg.author.id,
+                            pokeName : msg.content,
+                            pokePic : 0,
+                            globalpokenum: 0,
+                            xp: 0,
+                            level: 0,
+                            pokeNumber : 1,
+                            selected: true,
+                            Health : health,
+                            spAtk : spatk,
+                            SpDef : spdef,
+                            Def : def,
+                            Atk : atk,
+                            speed : spd,
+                            IVTOTAL : iv,
+                        } );
+                        await newPokemon.save ().catch ( err => console.log ( err ) );
+                    }
+                } );
                 collector.stop ( 'A pokemon was choosen' );
                 message.channel.send ( "You have chose **__" + msg.content + "__** as a starter pokemon" )
 
             } else {
                 return message.channel.send ( `You already chose a starter pokemon named ` + startername + `. You cannot choose twice...` )
                     .then ( collector.stop ( 'A pokemon was already choosen' ) );
+            }
+            } else {
+                return message.channel.send("Wrong Spelling or is not a Starter Pokemon");
             }
         })
     }

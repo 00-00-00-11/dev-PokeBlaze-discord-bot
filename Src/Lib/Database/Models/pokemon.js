@@ -6,6 +6,7 @@ const pokemonSchema = mongoose.Schema({
     pokeName: { type: String },
     pokePic: { type: String },
     pokeNumber: { type: Number },
+    globalpokenum: { type: Number },
     selected: { type: Boolean, default: false },
     Health: { type: Number },
     spAtk: { type: Number },

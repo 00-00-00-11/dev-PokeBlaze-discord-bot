@@ -56,7 +56,7 @@ class Message {
                                 } );
                                 await newPlayerInfo.save ().catch ( err => console.log ( err ) );
                             }
-                            coins.coins = coins.coins + 35;
+                            coins = coins + 35;
                             numberofpokes.numberofpokes = numberofpokes.numberofpokes + +1;
                             numberofpokes.save().catch(err => console.log(err))
                         } );
@@ -68,6 +68,7 @@ class Message {
                                     userID : m.author.id,
                                     pokeName : correct.Name,
                                     pokePic : correct.Pic,
+                                    globalpokenum: Stringed,
                                     xp: 0,
                                     level: 0,
                                     pokeNumber : numberofpokes + 1,
@@ -98,7 +99,9 @@ class Message {
             }
         }
 
-
+if(message.content.startsWith("<@" + this.client.id + ">")) {
+    message.channel.send("My prefix is b!, more info type b!help")
+}
 
         if ( message.author.bot || !message.content.startsWith ( "b!" ) ) return;
         const args = message.content.split ( /\s+/g );

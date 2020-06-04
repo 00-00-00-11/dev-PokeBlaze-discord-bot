@@ -22,21 +22,21 @@ class Pokemons extends PokeBlaze {
             .exec ( async ( err,res ) => {
                 if ( err ) console.log ( err );
                 if ( args[0] !== "latest" ) {
-                    if ( args[0] >= res.length ) {
+                    if ( args[0] < res.length ) {
                         let i = args[0];
                         const embed = new MessageEmbed ()
                             .setThumbnail ( message.author.displayAvatarURL ( { dynamic : true } ) )
                             .setTitle ( `${ message.author.tag }'s Pokemon list` )
-                            .addField ( "Pokemon Name",`${ res[i].pokeName }` )
-                            .addField ( "Pokemon Number",`${ res[i].pokeNumber }` )
-                            .addField ( "Selected",`${ res[i].selected }` )
-                            .addField ( "Health",`${ res[i].Health }/31` )
-                            .addField ( "Attack",`${ res[i].Atk }/31` )
-                            .addField ( "Defence",`${ res[i].Def }/31` )
-                            .addField ( "Special Attack",`${ res[i].spAtk }/31` )
-                            .addField ( "Special Defence",`${ res[i].SpDef }/31` )
-                            .addField ( "Speed",`${ res[i].speed }/31` )
-                            .addField ( "Total IV",`${ res[i].IVTOTAL }%` )
+                            .addField ( "Pokemon Name",`${ res[i].pokeName }`, true )
+                            .addField ( "Pokemon Number",`${ res[i].pokeNumber }`, true )
+                            .addField ( "Selected",`${ res[i].selected }`, true )
+                            .addField ( "Health",`${ res[i].Health }/31`, true )
+                            .addField ( "Attack",`${ res[i].Atk }/31`, true )
+                            .addField ( "Defence",`${ res[i].Def }/31`, true )
+                            .addField ( "Special Attack",`${ res[i].spAtk }/31`, true )
+                            .addField ( "Special Defence",`${ res[i].SpDef }/31`, true )
+                            .addField ( "Speed",`${ res[i].speed }/31`, true )
+                            .addField ( "Total IV",`${ res[i].IVTOTAL }%`, true )
 
                         await message.channel.send ( { embed } )
                     } else {
@@ -45,7 +45,7 @@ class Pokemons extends PokeBlaze {
                 } else {
                     if ( res.length === 0 ) return message.channel.send ( "You did not catch any pokemon. :(" )
                     console.log(res.length)
-                    let i = res.length;
+                    let i = res.length - 1;
                     const embed = new MessageEmbed ()
                         .setThumbnail ( message.author.displayAvatarURL ( { dynamic : true } ) )
                         .setTitle ( `${ message.author.tag }'s Pokemon list` )

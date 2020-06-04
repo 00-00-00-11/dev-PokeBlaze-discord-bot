@@ -110,14 +110,9 @@ const fs = require("fs")
                 const [ el6 ] = await page.$x ( `//*[@id="pokedex"]/tbody/tr[${ i }]/td[4]` );
                 const txt6 = await el6.getProperty ( 'textContent' );
                 const ttl = await txt6.jsonValue ();
-                const mega = pokes.mega
-                const galarian = pokes.galarian
-                const alolan = pokes.alolan
-                const x = mega.x
-                const y = mega.y
                 if ( !gal.startsWith ( "Mega" ) ) {
                     if ( gal.startsWith ( "Galarian" ) ) {
-                        galarian[ `${ number }` ] = {
+                        pokes["Galarian"][ `${ number }` ] = {
                             Name : gal ,
                             Pic : "pic here in future" ,
                             number : number ,
@@ -129,10 +124,11 @@ const fs = require("fs")
                             speed : spd ,
                             total : ttl
                         }
-                        fs.writeFileSync ( "./pokes.json" , JSON.stringify ( galarian , null , 4 ) )
+                        fs.writeFileSync ( "./pokes.json" , JSON.stringify ( pokes , null , 4 ) )
+                        console.log(JSON.stringify(pokes, null, 4))
                     } else {
                         if ( gal.startsWith ( "Alolan" ) ) {
-                            alolan[ `${ number }` ] = {
+                            pokes["Alolan"][ `${ number }` ] = {
                                 Name : gal ,
                                 Pic : "pic here in future" ,
                                 number : number ,
@@ -144,15 +140,29 @@ const fs = require("fs")
                                 speed : spd ,
                                 total : ttl
                             }
-                            fs.writeFileSync ( "./pokes.json" , JSON.stringify ( alolan , null , 4 ) )
+                            fs.writeFileSync ( "./pokes.json" , JSON.stringify ( pokes , null , 4 ) )
+                            console.log(JSON.stringify(pokes, null, 4))
                         } else {
-                            console.log("Something Special")
+                            pokes["specials"][ `${ number }` ] = {
+                                Name : gal ,
+                                Pic : "pic here in future" ,
+                                number : number ,
+                                Health : health ,
+                                attack : atk ,
+                                defence : def ,
+                                specialatk : spatk ,
+                                specialdefence : spdef ,
+                                speed : spd ,
+                                total : ttl
+                            }
+                            fs.writeFileSync ( "./pokes.json" , JSON.stringify ( pokes , null , 4 ) )
+                            console.log(JSON.stringify(pokes, null, 4))
                         }
                     }
             }
                  else {
                     if ( gal.endsWith ( "X" ) ) {
-                        x[ `${ number }` ] = {
+                        pokes["mega"]["x"][ `${ number }` ] = {
                             Name : gal ,
                             Pic : "pic here in future" ,
                             number : number ,
@@ -164,10 +174,11 @@ const fs = require("fs")
                             speed : spd ,
                             total : ttl
                         }
-                        fs.writeFileSync("./pokes.json", JSON.stringify(x, null, 4))
+                        fs.writeFileSync("./pokes.json", JSON.stringify(pokes, null, 4))
+                        console.log(JSON.stringify(pokes, null, 4))
                     } else {
                         if ( gal.endsWith ( "Y" ) ) {
-                            y[ `${ number } ` ] = {
+                            pokes["mega"]["y"][ `${ number } ` ] = {
                                 Name : gal ,
                                 Pic : "pic here in future" ,
                                 number : number ,
@@ -179,9 +190,10 @@ const fs = require("fs")
                                 speed : spd ,
                                 total : ttl
                             }
-                            fs.writeFileSync("./pokes.json", JSON.stringify(y, null, 4))
+                            fs.writeFileSync("./pokes.json", JSON.stringify(pokes, null, 4))
+                            console.log(JSON.stringify(pokes, null, 4))
                         } else {
-                            mega[`${ number }`] = {
+                            pokes["mega"][`${ number }`] = {
                                 Name : gal ,
                                 Pic : "pic here in future" ,
                                 number : number ,
@@ -193,7 +205,8 @@ const fs = require("fs")
                                 speed : spd ,
                                 total : ttl
                             }
-                            fs.writeFileSync("./pokes.json", JSON.stringify(mega, null, 4))
+                            fs.writeFileSync("./pokes.json", JSON.stringify(pokes, null, 4))
+                            console.log(JSON.stringify(pokes, null, 4))
                         }
                     }
                 }
