@@ -1,6 +1,8 @@
 const PokeCmd = require("../../../Lib/Base/Command");
 const PlayerInfo = require("../../../Lib/Database/Models/playerinfo")
+const Pokemon = require("../../../Lib/Database/Models/pokemon");
 const { MessageCollector, MessageEmbed } = require("discord.js");
+const Pokemons = require("../../../Lib/AllPokemons/pokes.json");
 let msgCollectorFilter = (newMsg, originalMsg) => newMsg.author.id === originalMsg.author.id;
 class Start extends PokeCmd {
     constructor (client) {
@@ -9,7 +11,7 @@ class Start extends PokeCmd {
             description: "Chooses A Starter Pokemon",
             cooldown: 5000,
             usage: "b!start",
-            aliases: ["starter", "stpoke"]
+            aliases: ["s", "stpoke"]
         });
     }
     async run (client, message, args) {
@@ -22,7 +24,7 @@ class Start extends PokeCmd {
             .setAuthor ( "PokeBlaze" )
             .setDescription ( "Please choose a starter Pokemon :)\n" +
                 "\n"+
-        "Gen 1: Bulbasur, Charmander, Squirtle\n" +
+        "Gen 1: Bulbasaur, Charmander, Squirtle\n" +
         "\n" +
         "Gen 2: Chikorita, Cyndaquil, Totodile\n" +
         "\n" +
@@ -50,7 +52,7 @@ class Start extends PokeCmd {
         let iv = Math.floor ( Math.ceil(atk + health + spatk + spdef + def + spd) / (31 * 6) *100 );
         let collector = new MessageCollector(message.channel, msgCollectorFilter.bind(null, message));
         collector.on('collect', async msg => {
-            if (["Bulbasur", "Charmander", "Squirtle", "Chikorita", "Cyndaquil", "Totodile", "Treecko", "Torchic", "Mudkip", "Turtwig", "Chimchar", "Piplup", "Snivy", "Tepig", "Oshawott", "Chespin", "Fennekin", "Froakie", "Rowlet", "Litten", "Popplio", "Grookey", "Scorbunny", "Sobble"].includes(msg.content) ) {
+            if (["Bulbasaur", "Charmander", "Squirtle", "Chikorita", "Cyndaquil", "Totodile", "Treecko", "Torchic", "Mudkip", "Turtwig", "Chimchar", "Piplup", "Snivy", "Tepig", "Oshawott", "Chespin", "Fennekin", "Froakie", "Rowlet", "Litten", "Popplio", "Grookey", "Scorbunny", "Sobble"].includes(msg.content) ) {
             if ( !starterchoosen ) {
                 if(msg.content === "") {
 
@@ -147,8 +149,16 @@ class Start extends PokeCmd {
 
                 }
 
+                let disabled;
 
-                console.log ( msg.content )
+                for (let retards in Pokemons) {
+
+                    if (Pokemons[retards].Name === msg.content) {
+                        disabled = Pokemons[retards];
+                        disabled.pokenum = Number(retards);
+                    };
+                };
+
                 await PlayerInfo.findOne ( { userID : msg.author.id } , async ( err , startername , starterchoosen, numberofpokes ) => {
                     if ( err ) console.log ( err );
                     if ( !startername || !starterchoosen || !numberofpokes) {
@@ -163,15 +173,15 @@ class Start extends PokeCmd {
                         newPlayerInfo.save ().catch ( err => console.log ( err ) );
                     }
                 } );
-                await Pokemon.findOne ( { userID : m.author.id },async ( err,pokeName,pokeNumber,selected,pokePic,Health,spAtk,SpDef,Def,Atk,speed,IVTOTAL,xp,level ) => {
+                await Pokemon.findOne ( { userID : msg.author.id },async ( err,pokeName,pokeNumber,selected,pokePic,Health,spAtk,SpDef,Def,Atk,speed,IVTOTAL,xp,level ) => {
                     if ( err ) console.log ( err );
                     if ( !pokeName || !pokePic || !pokeNumber || !selected || !xp || !level || !Health || !spAtk || !SpDef || Def || !Atk || !speed || IVTOTAL ) {
                         const newPokemon = new Pokemon ( {
                             userName : msg.author.username,
                             userID : msg.author.id,
-                            pokeName : msg.content,
-                            pokePic : 0,
-                            globalpokenum: 0,
+                            pokeName : disabled.Name,
+                            pokePic : disabled.Pic,
+                            globalpokenum: disabled.pokenum,
                             xp: 0,
                             level: 0,
                             pokeNumber : 1,
